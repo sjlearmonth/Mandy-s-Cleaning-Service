@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Mandy's Cleaning Services in the Luton, Bedfordshire</title>
+    <title>Mandy's Cleaning Services in the Luton, Bedfordshire Area</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -15,10 +15,6 @@
         <img src="images/cleaning-02.jpeg">
     </div>
     <h2>Introduction to My Services</h2>
-    <script type="text/javascript">
-        var a = "<?php echo $message_status; ?>";
-            document.write('<html><body><p>' + a + '</p></body></html>');
-    </script>
     <p>Hello and welome to my website. My name is Mandy and I am an experienced, reliable, domestic home cleaner. I am
         passionate and
         dedicated to everything "cleaning" and I offer professional cleaning services to any client in the Luton area of
@@ -26,28 +22,26 @@
         your home. I have an hourly charge rate of £... per hour and I can accept payment in cash or by bank transfer
         with a receipt. Please complete the form below with your cleaning request and I will contact you to discuss your
         exact requirements.</p>
-    <form action="php/test.php" method="post">
-        <div class="clientInfo">
-            <label for="name">Your Name: </label>
-            <input type="text" name="name" size="40">
-        </div>
-        <div class="clientInfo">
-            <label for="number">Phone Number: </label>
-            <input type="text" name="number" size="40">
-        </div>
-        <div class="clientInfo">
-            <label for="email">Your Email: </label>
-            <input type="email" name="email" size="40">
-        </div>
-        <div class="clientInfo">
-            <label for="message">Your Message: </label>
-            <textarea name="message" id="" cols="40" rows="1"></textarea>
-            <br>
-        </div>
-        <div>
-            <button type="submit" name="submitButton">Send</button>
-        </div>
+    
+<div class="container">
+    <form action="php/contact-form-process.php" method="post">
+  
+      <label for="fname">First Name:</label>
+      <input type="text" id="fname" name="firstName" placeholder="Your first name...">
+  
+      <label for="lname">Last Name:</label>
+      <input type="text" id="lname" name="lastLame" placeholder="Your last name...">
+  
+      <label for="number">Phone Number:</label>
+      <input type="text" id="number" name="phoneNumber" placeholder="Your phone number...">
+  
+      <label for="message">Your Message:</label>
+      <textarea id="message" name="enquiryMessage" placeholder="Type your message here..."></textarea>
+  
+      <input type="submit" value="Submit">
+  
     </form>
+  </div>
 </body>
 
 </html>
