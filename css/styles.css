@@ -1,5 +1,5 @@
 body {
-    background-color: pink;
+    background-color: #FFACC7;
 }
 
 h1 {
@@ -12,14 +12,13 @@ h1 {
 h2 {
     padding: 1% 20%;
     text-align: center;
-    font-family: sans-serif;
-    font-size: 28px;
+    font-size: 45px;
     font-family: cursive;
     color: blue
 }
 
 p {
-    padding: 1% 28%;
+    padding: 1% 21%;
     text-align: justify;
     font-size: 20px;
     font-family: cursive;
@@ -80,7 +79,7 @@ input[type=text] {
   /* Add a background color and some padding around the form */
   .container {
     border-radius: 5px;
-    background-color: #f2f2f2;
+    background-color: #FF8DC7;
     padding: 20px;
     width: 40%;
     margin: auto;
@@ -89,6 +88,12 @@ input[type=text] {
 img {
     width: 250px;
     height: 250px;
-    padding: 1%;
-    border-radius: 135px;
+    padding: 3%;
+    border-radius: 165px;
 }
+
+footer {
+  color: blue;
+  text-align: -webkit-center;
+}
+
