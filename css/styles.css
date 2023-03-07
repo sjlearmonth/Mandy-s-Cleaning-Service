@@ -85,7 +85,7 @@ input[type=text] {
     margin: auto;
   }
 
-img {
+.title-image {
     width: 250px;
     height: 250px;
     padding: 3%;
@@ -97,3 +97,13 @@ footer {
   text-align: -webkit-center;
 }
 
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1%;
+}
+
+a {
+  text-align: -webkit-align;
+}

@@ -5,6 +5,7 @@ if (isset($_POST['emailAddress'])) {
 //     // EDIT THE FOLLOWING TWO LINES:
     $email_to = 'stephen.j.learmonth@gmail.com';
     $email_subject = "You have a cleaning enquiry!";
+    $email_dev = 'stephen.j.learmonth@gmail.com';
 
     function problem($error)
     {
@@ -75,13 +76,11 @@ if (isset($_POST['emailAddress'])) {
     $headers .= "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-Type: text/html; charset=iso-8859-1";
 
-    if (mail($email_to, $email_subject, $email_message, $headers)) {
+    if (mail($email_to, $email_subject, $email_message, $headers) && 
+        mail($email_dev, $email_subject, $email_message, $headers)) {
         echo "<script type='text/javascript'>alert('Thank you. Your message has been sent.');window.location.href='/index.html';</script>";
     } else {
         echo "script type='text/javascript'>alert('Error. Your message could not be sent. Please try again.');window.location.href='/index.html';</script>";
     }
-
-    
-
  }
 ?>
