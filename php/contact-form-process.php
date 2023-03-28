@@ -1,150 +1,140 @@
 <?php
 
-if (isset($_POST['emailAddress'])) {
+// Check if at least one field is not empty
+if (strlen($_POST['firstName']) > 0 ||
+    strlen($_POST['lastName']) > 0 ||
+    strlen($_POST['phoneNumber']) > 0 ||
+    strlen($_POST['emailAddress']) > 0 ||
+    strlen($_POST['enquiryMessage']) > 0) {
 
-    // $email_to = 'mandy.ohaire@yahoo.co.uk';
-    $email_to = 'stephen.j.learmonth@gmail.com';
-    $email_subject = "You have a cleaning enquiry!";
-    $email_dev = 'mandyohaireenquiries@gmail.com';
+    ////////////////////////////////////
+    // At least one field is not empty//
+    ////////////////////////////////////
 
-    // Validate that expected data actually exists
-    if (
-        !isset($_POST['firstName']) ||
-        !isset($_POST['lastName']) ||
-        !isset($_POST['enquiryMessage'])
-    ) {
-        $error = "Error: One or more fields are empty. Please go back and fill in the missing fields.";
-        echo "script type='text/javascript'>alert(" + $error + ");window.location.href='/index.html';</script>";
+    // Check if firstName field is empty or invalid
+    $firstName = $_POST['firstName'];
+    $firstName_regex = "/^[A-Za-z .'-]+$/";
+    if (!preg_match($firstName_regex, $firstName)) {
+        echo "<script type='text/javascript'>alert('The first name is missing or does not appear to be valid. Please try again');window.location.href='/index.html';</script>";
+        exit();
     }
 
-    $firstName = $_POST['firstName']; // required
-    $lastName = $_POST['lastName']; // required
-    $emailAddress = $_POST['emailAddress']; // required
-    $enquiryMessage = $_POST['enquiryMessage']; // required
-
-    $error_message = "";
-
-    $string_exp = "/^[A-Za-z .'-]+$/";
-
-    if (!preg_match($string_exp, $firstName)) {
-        $error_message .= 'The first name that you entered does not appear to be valid.<br>';
+    // Check if lastName field is empty or invalid
+    $lastName = $_POST['lastName'];
+    $lastName_regex = "/^[A-Za-z .'-]+$/";
+    if (!preg_match($lastName_regex, $lastName)) {
+        echo "<script type='text/javascript'>alert('The last name is missing or does not appear to be valid.  Please try again');window.location.href='/index.html';</script>";
+        exit();
     }
 
-    if (!preg_match($string_exp, $lastName)) {
-        $error_message .= 'The last name that you entered does not appear to be valid.<br>';
+    // Check if phoneNumber field is empty or is invalid
+    $phoneNumber = $_POST['phoneNumber'];
+    $phoneNumber_regex = '/^[0-9]+$/';
+    if (!preg_match($phoneNumber_regex, $phoneNumber) || substr($phoneNumber, 0, 2) != '07' || strlen($phoneNumber) != 11) {
+        echo "<script type='text/javascript'>alert('The phone number is missing or does not appear to be a valid mobile phone number. Please try again');window.location.href='/index.html';</script>";
+        exit();
     }
 
-    $email_exp = '/^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/';
- 
-    if (!preg_match($email_exp, $emailAddress)) {
-        $error_message .= 'The email address that you entered does not appear to be valid.<br>';
+    // Check if emailAddress field is empty or is invalid
+    $emailAddress = $_POST['emailAddress'];
+    $emailAddress_regex = '/^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/';
+    if (!preg_match($emailAddress_regex, $emailAddress)) {
+        echo "<script type='text/javascript'>alert('The email address is missing or does not appear to be valid. Please try again');window.location.href='/index.html';</script>";
+        exit();
     }
 
-    if (strlen($enquiryMessage) < 2) {
-        $error_message .= 'The message that you entered does not appear to be valid.<br>';
+    // Check if enquiryMessage field is empty
+    $enquiryMessage = $_POST['enquiryMessage'];
+    if (strlen($enquiryMessage) == 0) {
+        echo "<script type='text/javascript'>alert('Your message is missing. Please try again');window.location.href='/index.html';</script>";
+        exit();
     }
 
-    if (strlen($error_message) > 0) {
-        echo "script type='text/javascript'>alert(\"Error: One or more fields have invalid data. Please go back and try again.\");window.location.href='/index.html';</script>";
-    }
+    //////////////////////////////////
+    // Buid SMS message and send it //
+    //////////////////////////////////
 
-    // Fetch phone number
-    $phoneNumber = $_POST['phoneNumber']; // required
-
-    // Build regex expression for phone number match
-    $number_exp = '/^[0-9]+$/';
-
-    // Check if phone number is valid
-    if (preg_match($number_exp, $phoneNumber) && substr($phoneNumber, 0, 2) == '07' && strlen($phoneNumber) == 11) {
-
-        // Base URL and send PHP script
-        $url = "https://api-mapper.clicksend.com/http/v2/send.php";
+    // Base URL and send PHP script
+    $url = "https://api-mapper.clicksend.com/http/v2/send.php";
         
-        // Format phone number for API call
-        $phoneNumber = '44' . substr($phoneNumber, 1);
-    
-        // Build sender ID for SMS message
-        $senderid = "Unknown";
-    
-        // Build SMS message body
-        $sms_message = "You have a message from a potential client. Here are the details.". "\n\n";
-        $sms_message .= "First Name: " . $firstName . "\n";
-        $sms_message .= "Last Name: " . $lastName . "\n";
-        $sms_message .= "Email Address: " . $emailAddress . "\n";
-        $sms_message .= "Phone Number: " . '+' . $phoneNumber . "\n";
-        $sms_message .= "Enquiry Message: " . $enquiryMessage;
-    
-        // Build array for API call
-        $data = array("username" => "stephen.j.learmonth@gmail.com", "key" => "8C32B75C-35A6-C906-5A04-A6CD05141B11", "to" => $phoneNumber, "senderid" => $senderid, "message" => $sms_message);
-    
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    
-        // Build the email content and headers
-        $email_message = "You have a message from a potential client. Here are the details.". "<br /><br />";
-        $email_message .= "First Name: " . $firstName . "<br /><br />";
-        $email_message .= "Last Name: " . $lastName . "<br /><br />";
-        $email_message .= "Email Address: " . $emailAddress . "<br /><br />";
-        $email_message .= "Phone Number: " . $phoneNumber . "<br /><br />";
-        $email_message .= "Enquiry Message: " . $enquiryMessage;
-    
-        $headers = "X-Mailer: PHP/" . phpversion() . "\r\n";
-        $headers .= "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-Type: text/html; charset=iso-8859-1";
-    
-        // Send the email message
-        $email_sent_successfully = mail($email_to, $email_subject, $email_message, $headers) && mail($email_dev, $email_subject, $email_message, $headers);
+    // Build sender ID for SMS message
+    $senderid = "Unknown";
 
-        // Send the SMS message
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $sms_sent_successfully = strpos($response, "Success");
+    // Format phone number correctly
+    $phoneNumber = '+44' . substr($phoneNumber, 1);
+    
+    // Build SMS message body
+    $SMSMessage = "You have a message from a potential client. Here are the details.". "\n\n";
+    $SMSMessage .= "First Name: " . $firstName . "\n";
+    $SMSMessage .= "Last Name: " . $lastName . "\n";
+    $SMSMessage .= "Email Address: " . $emailAddress . "\n";
+    $SMSMessage .= "Phone Number: " . $phoneNumber . "\n";
+    $SMSMessage .= "Enquiry Message: " . $enquiryMessage;
+    
+    // Build array for API call
+    $recipientPhoneNumber = "447979315993";
+    // $recipientPhoneNumber = "447757782537";
+    $data = array("username" => "stephen.j.learmonth@gmail.com", "key" => "8C32B75C-35A6-C906-5A04-A6CD05141B11", "to" => $recipientPhoneNumber, "senderid" => $senderid, "message" => $SMSMessage);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        // Check if they have both been sent successfully
-        if ($email_sent_successfully && $sms_sent_successfully) {
+    // Send the SMS message
+    $response = curl_exec($ch);
+
+    // Close the connection
+    curl_close($ch);
+
+    // check that SMS message has been sent successfully
+    if (strpos($response, "Success") == false) {
+        $SMSSentSuccessfully = false;
+    } else {
+        $SMSSentSuccessfully = true;
+    }
+
+    ////////////////////////////////////
+    // Buid email message and send it //
+    ////////////////////////////////////
+
+    // Build email addresses of recipients
+    $emailTo = 'mandy.ohaire@yahoo.co.uk';
+    // $emailTo = 'stephen.j.learmonth@gmail.com';
+    $emailDev = 'mandyohaireenquiries@gmail.com';
+
+    // Build email subject
+    $emailSubject = "You have a cleaning enquiry!";
+    
+    // Build the email body
+    $emailMessage = "You have a message from a potential client. Here are the details.". "<br /><br />";
+    $emailMessage .= "First Name: " . $firstName . "<br /><br />";
+    $emailMessage .= "Last Name: " . $lastName . "<br /><br />";
+    $emailMessage .= "Email Address: " . $emailAddress . "<br /><br />";
+    $emailMessage .= "Phone Number: " . $phoneNumber . "<br /><br />";
+    $emailMessage .= "Enquiry Message: " . $enquiryMessage;
+ 
+    // Build email headers
+    $headers = "X-Mailer: PHP/" . phpversion() . "\r\n";
+    $headers .= "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-Type: text/html; charset=iso-8859-1";
+    
+    // Send the email messages
+    $emailSentSuccessfully = mail($emailTo, $emailSubject, $emailMessage, $headers) &&
+                             mail($emailDev, $emailSubject, $emailMessage, $headers);
+
+    // Check if both the SMS and mail messages have been sent successfully
+    if ($SMSSentSuccessfully && $emailSentSuccessfully) {
             echo "<script type='text/javascript'>alert('Thank you. Your message has been sent.');window.location.href='/index.html';</script>";
         } else {
-            echo "script type='text/javascript'>alert(" + $error_message + ");window.location.href='/index.html';</script>";
-        }
-    } else {
+            echo "<script type='text/javascript'>alert('There was a problem sending your message. Please try again');window.location.href='/index.html';</script>";
+        }    
 
-        if (!$phoneNumber == "") {
-
-            // Print out error message as phone number is invalid or missing
-            $error_message .= 'The phone number that you entered does not appear to be valid.<br>';
-
-        } else {
-
-            // Build the email message content and headers
-            $email_message = "You have a message from a potential client. Here are the details.". "<br /><br />";
-            $email_message .= "First Name: " . $firstName . "<br /><br />";
-            $email_message .= "Last Name: " . $lastName . "<br /><br />";
-            $email_message .= "Email Address: " . $emailAddress . "<br /><br />";
-            $email_message .= "Phone Number: " . $phoneNumber . "<br /><br />";
-            $email_message .= "Enquiry Message: " . $enquiryMessage;
-        
-            $headers = "X-Mailer: PHP/" . phpversion() . "\r\n";
-            $headers .= "MIME-Version: 1.0" . "\r\n";
-            $headers .= "Content-Type: text/html; charset=iso-8859-1";
-        
-            // Send the email message
-            $email_sent_successfully = mail($email_to, $email_subject, $email_message, $headers) && mail($email_dev, $email_subject, $email_message, $headers);
-
-            // Check if email message has been sent successfully
-            if ($email_sent_successfully) {
-                echo "<script type='text/javascript'>alert('Thank you. Your message has been sent.');window.location.href='/index.html';</script>";
-            } else {
-                echo "script type='text/javascript'>alert(" + $error_message + ");window.location.href='/index.html';</script>";        
-            }
-        }
-    }
 } else {
     
-    // No email address, so prompt user to enter one
-    echo "script type='text/javascript'>alert('Error. Please enter an email address and try again.');window.location.href='/index.html';</script>";            
+    // All fields are empty so display error message to user
+    echo "<script type='text/javascript'>alert('All fields are empty. Please try again.');window.location.href='/index.html';</script>";            
 }
 ?>
