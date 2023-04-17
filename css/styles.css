@@ -30,7 +30,11 @@ p {
 }
 
 a {
-  text-align: -webkit-align;
+  font-size: 0.8rem;
+  display: block;
+  text-align: center;
+  color: blue;
+  margin-bottom: 0.5rem;
 }
 
 label {
@@ -131,10 +135,6 @@ footer {
   margin-right: auto;
   padding: 1%;
 }
-
-/* #cleaning-section {
-  display: inline-block;
-  margin: 0 auto;
-} */
+/
 
 
